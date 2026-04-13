@@ -24,10 +24,44 @@ const title = "未来";
       }
 
       body {
+        scroll-behavior: smooth;
         min-height: 100vh;
         display: flex;
         align-items: center;
         justify-content: center;
+        padding: 24px;
+      }
+
+      .navbar {
+        position: sticky;
+        top: 0;
+        z-index: 10;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding: 18px 32px;
+        background: rgba(255,255,255,0.75);
+        backdrop-filter: blur(10px);
+      }
+
+      .navbar nav a {
+        margin-left: 20px;
+        text-decoration: none;
+        color: #334155;
+      }
+
+      .brand {
+        font-size: 1.2rem;
+        font-weight: 700;
+        color: #1f4fd1;
+      }
+
+      .page {
+        width: 100%;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        gap: 32px;
         padding: 24px;
       }
 
@@ -42,9 +76,33 @@ const title = "未来";
       }
 
       h1 {
+        scroll-margin-top: 100px;
         font-size: 3rem;
         margin-bottom: 16px;
         color: #1f4fd1;
+      }
+
+      h2 {
+        font-size: 2rem;
+        margin-bottom: 20px;
+        color: #1e3a8a;
+      }
+
+      .post-list {
+        display: grid;
+        gap: 20px;
+      }
+
+      .post-item {
+        padding: 20px;
+        border-radius: 18px;
+        background: #f8fbff;
+        border: 1px solid #dbeafe;
+      }
+
+      .post-item h3 {
+        margin-bottom: 10px;
+        color: #1e40af;
       }
 
       p {
@@ -84,15 +142,44 @@ const title = "未来";
   </head>
 
   <body>
-    <main class="card">
-      <h1>欢迎来到，未来</h1>
-      <p>
-        内容完善中…
-      </p>
-      <p>
-        Please standby
-      </p>
-      <a href="/" class="btn">开始探索</a>
+    <header class="navbar">
+      <div class="brand">未来</div>
+      <nav>
+        <a href="#home">首页</a>
+        <a href="#blog">博客</a>
+        <a href="#about">关于</a>
+      </nav>
+    </header>
+
+    <main class="page">
+      <section class="card hero" id="home">
+        <h1>你好，欢迎来到未来</h1>
+        <p>
+          “未来”是一个关于科技、思考与创造的个人空间。这里会记录我的灵感、项目、观察，以及对世界变化的想法。
+        </p>
+        <p>
+          我希望把它做成一个像 Muzuki 风格一样简洁、安静、具有呼吸感的内容网站。
+        </p>
+        <a href="#blog" class="btn">阅读博客</a>
+      </section>
+
+      <section class="card posts" id="blog">
+        <h2>最新文章</h2>
+        <div class="post-list">
+          <article class="post-item">
+            <h3>AI 与人的协作边界</h3>
+            <p>记录我对人工智能、创造力与未来社会关系的思考。</p>
+          </article>
+          <article class="post-item">
+            <h3>我的 Astro 建站笔记</h3>
+            <p>从零开始搭建个人网站的过程、踩坑和经验总结。</p>
+          </article>
+          <article class="post-item">
+            <h3>关于“未来”的一些想法</h3>
+            <p>为什么我想把这个网站命名为“未来”。</p>
+          </article>
+        </div>
+      </section>
     </main>
   </body>
 </html>
