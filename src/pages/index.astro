@@ -1,0 +1,98 @@
+文件：src/pages/index.astro
+
+```astro
+---
+const title = "未来";
+---
+
+<html lang="zh-CN">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>{title}</title>
+    <style>
+      :root {
+        font-family: "Microsoft YaHei", "PingFang SC", "Noto Sans SC", sans-serif;
+        color: #222;
+        background: linear-gradient(135deg, #f7fafc 0%, #e6f0ff 100%);
+      }
+
+      * {
+        box-sizing: border-box;
+        margin: 0;
+        padding: 0;
+      }
+
+      body {
+        min-height: 100vh;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        padding: 24px;
+      }
+
+      .card {
+        width: 100%;
+        max-width: 760px;
+        background: rgba(255, 255, 255, 0.92);
+        border-radius: 24px;
+        padding: 48px;
+        box-shadow: 0 12px 40px rgba(0, 0, 0, 0.12);
+        backdrop-filter: blur(10px);
+      }
+
+      h1 {
+        font-size: 3rem;
+        margin-bottom: 16px;
+        color: #1f4fd1;
+      }
+
+      p {
+        font-size: 1.2rem;
+        line-height: 1.8;
+        color: #444;
+        margin-bottom: 20px;
+      }
+
+      .btn {
+        display: inline-block;
+        margin-top: 12px;
+        padding: 14px 28px;
+        border-radius: 999px;
+        background: #2563eb;
+        color: white;
+        text-decoration: none;
+        font-weight: 600;
+        transition: transform 0.2s ease, box-shadow 0.2s ease;
+      }
+
+      .btn:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 8px 20px rgba(37, 99, 235, 0.3);
+      }
+
+      @media (max-width: 768px) {
+        .card {
+          padding: 28px;
+        }
+
+        h1 {
+          font-size: 2.2rem;
+        }
+      }
+    </style>
+  </head>
+
+  <body>
+    <main class="card">
+      <h1>欢迎来到，未来</h1>
+      <p>
+        内容完善中…
+      </p>
+      <p>
+        Please standby
+      </p>
+      <a href="/" class="btn">开始探索</a>
+    </main>
+  </body>
+</html>
