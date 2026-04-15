@@ -10,8 +10,8 @@ const title = "未来";
     <style>
       :root {
         font-family: "Microsoft YaHei", "PingFang SC", "Noto Sans SC", sans-serif;
-        color: #222;
-        background: linear-gradient(135deg, #f7fafc 0%, #e6f0ff 100%);
+        color: #e5e7eb;
+        background: linear-gradient(135deg, #0f172a 0%, #111827 100%);
       }
 
       * {
@@ -37,20 +37,20 @@ const title = "未来";
         justify-content: space-between;
         align-items: center;
         padding: 18px 32px;
-        background: rgba(255,255,255,0.75);
+        background: rgba(15, 23, 42, 0.72);
         backdrop-filter: blur(10px);
       }
 
       .navbar nav a {
         margin-left: 20px;
         text-decoration: none;
-        color: #334155;
+        color: #cbd5e1;
       }
 
       .brand {
         font-size: 1.2rem;
         font-weight: 700;
-        color: #1f4fd1;
+        color: #93c5fd;
       }
 
       .page {
@@ -65,10 +65,10 @@ const title = "未来";
       .card {
         width: 100%;
         max-width: 760px;
-        background: rgba(255, 255, 255, 0.92);
+        background: rgba(17, 24, 39, 0.88);
         border-radius: 24px;
         padding: 48px;
-        box-shadow: 0 12px 40px rgba(0, 0, 0, 0.12);
+        box-shadow: 0 18px 48px rgba(0, 0, 0, 0.35);
         backdrop-filter: blur(10px);
       }
 
@@ -93,8 +93,8 @@ const title = "未来";
       .post-item {
         padding: 20px;
         border-radius: 18px;
-        background: #f8fbff;
-        border: 1px solid #dbeafe;
+        background: rgba(30, 41, 59, 0.75);
+        border: 1px solid rgba(148, 163, 184, 0.2);
       }
 
       .post-item h3 {
@@ -105,7 +105,7 @@ const title = "未来";
       p {
         font-size: 1.2rem;
         line-height: 1.8;
-        color: #444;
+        color: #cbd5e1;
         margin-bottom: 20px;
       }
 
@@ -114,7 +114,7 @@ const title = "未来";
         margin-top: 12px;
         padding: 14px 28px;
         border-radius: 999px;
-        background: #2563eb;
+        background: linear-gradient(135deg, #3b82f6, #6366f1);
         color: white;
         text-decoration: none;
         font-weight: 600;
@@ -139,7 +139,14 @@ const title = "未来";
   </head>
 
   <body>
-    <header class="navbar">
+    <!-- 新增页面建议：
+1. 新建 src/pages/about.astro：介绍“未来”网站理念与作者。
+2. 新建 src/pages/blog.astro：展示文章列表。
+3. 新建 src/pages/posts/first-post.md：第一篇文章。
+
+关于导航栏：当前左侧品牌 + 右侧链接，是刻意采用的简洁布局，参考 Muzuki 风格的留白感；如果你想更居中或更传统，也可以调整。
+-->
+<header class="navbar">
       <div class="brand">未来</div>
       <nav>
         <a href="#home">首页</a>
@@ -163,18 +170,15 @@ const title = "未来";
       <section class="card posts" id="blog">
         <h2>最新文章</h2>
         <div class="post-list">
-          <article class="post-item">
-            <h3>AI 与人的协作边界</h3>
-            <p>记录我对人工智能、创造力与未来社会关系的思考。</p>
-          </article>
-          <article class="post-item">
-            <h3>我的 Astro 建站笔记</h3>
-            <p>从零开始搭建个人网站的过程、踩坑和经验总结。</p>
-          </article>
-          <article class="post-item">
-            <h3>关于“未来”的一些想法</h3>
-            <p>为什么我想把这个网站命名为“未来”。</p>
-          </article>
+          <a href="/posts/first-post" class="post-item">
+            <h3>关于AI、意识与人类未来的一场漫谈</h3>
+            <p>从一顿午餐开始，我们谈到了音乐、味觉、神经信号，再一路延伸到人工智能、主观意识、社会结构，最后落到一个并不轻松、却值得面对的问题：在AI时代，人类将成为什么？</p>
+          </a>
+
+          <a href="/posts/ai02" class="post-item">
+            <h3>从恒星到黑洞：关于终极能源可能性的对话</h3>
+            <p>从恒星核聚变到黑洞蒸发，再到核能利用的现实边界，这场对话围绕一个根本问题展开：人类是否有可能找到一种既高效又可控的终极能源。</p>
+          </a>
         </div>
       </section>
     </main>
