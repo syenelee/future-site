@@ -1,10 +1,10 @@
 # Use DecapBridge classic auth (required)
 backend:
-  name: git-gateway
+  name: github
   repo: syenelee/future-site
   branch: main
-  identity_url: https://auth.decapbridge.com/sites/0a29dd5e-d731-4a8e-8663-e677149ffa01
-  gateway_url: https://gateway.decapbridge.com
+  base_url: https://api.decapbridge.com
+  auth_endpoint: auth
 
   # See who did what (optional)
   commit_messages:
