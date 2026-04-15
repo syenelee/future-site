@@ -3,24 +3,24 @@ backend:
   repo: syenelee/future-site
   branch: main
 
-media_folder: "public/images"
-public_folder: "/images"
+media_folder: public/images
+public_folder: /images
 
 collections:
-  - name: "posts"
-    label: "博客文章"
-    folder: "src/pages/posts"
+  - name: posts
+    label: Posts
+    folder: src/pages/posts
     create: true
     slug: "{{slug}}"
     fields:
-      - label: "标题"
-        name: "title"
-        widget: "string"
+      - label: Title
+        name: title
+        widget: string
 
-      - label: "发布日期"
-        name: "date"
-        widget: "datetime"
+      - label: Date
+        name: date
+        widget: datetime
 
-      - label: "正文"
-        name: "body"
-        widget: "markdown"
+      - label: Body
+        name: body
+        widget: markdown
