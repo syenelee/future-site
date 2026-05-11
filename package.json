@@ -12,6 +12,7 @@
     "license": "ISC",
     "description": "",
     "dependencies": {
+        "@astrojs/rss": "^4.0.18",
         "astro": "^5.7.12"
     }
 }
