@@ -140,8 +140,104 @@ export default defineConfig({
   site: 'https://future-site.vercel.app'
 });
 ```
+## 关键依赖（以 package.json 为准）
 
+主要：
+
+- astro
+- @astrojs/rss
+- giscus
+- remark / rehype（如果有）
+- sitemap（如果有）
 ------
+## 高危文件（修改前谨慎）
+
+### astro.config.mjs
+
+影响：
+
+- site
+- RSS
+- integrations
+- build
+
+### src/layouts/Layout.astro
+
+影响：
+
+- 全站 head
+- favicon
+- SEO
+- 全局样式
+
+### package.json
+
+影响：
+
+- 依赖
+- scripts
+
+### src/content/blog/
+
+影响：
+
+- 所有文章内容
+## 新电脑恢复项目流程
+
+1. 克隆仓库
+
+```powershell
+git clone https://github.com/syenelee/future-site.git
+cd future-site
+```
+
+2. 安装依赖
+
+```powershell
+npm install
+```
+
+3. 本地运行
+
+```powershell
+npm run dev
+```
+
+4. 更新前先同步
+
+```powershell
+git pull origin main --rebase
+```
+
+5. 修改后提交
+
+```powershell
+git add .
+git commit -m "update"
+git push origin main
+```
+
+## 本地开发
+
+启动：
+
+```powershell
+npm install
+npm run dev
+```
+
+访问：
+
+```text
+http://localhost:4321
+```
+
+生产构建测试：
+
+```powershell
+npm run build
+npm run preview
+```
 
 ## 网站结构（已知）
 
@@ -365,13 +461,15 @@ Vercel → Domains
 ------
 
 ## 新聊天时使用方式
+新聊天时这样说：
 
-复制本文件，然后加一句：
+这是一个已经上线的 Astro + Vercel 博客项目，请按维护现有项目方式指导。
 
-“这是一个已经上线的 Astro + Vercel 博客项目，请按维护现有项目方式指导，不要从零教程式讲解。”
+项目状态见 PROJECT_STATUS.md。
 
-再写：
+当前问题：
 
-“当前问题：……”
-
-即可。
+1. 问题现象：
+2. 报错信息：
+3. 涉及文件：
+4. 我刚做过什么操作：
