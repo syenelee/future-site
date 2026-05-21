@@ -19,7 +19,7 @@ backend:
 logo_url: https://decapbridge.com/decapcms-with-bridge.svg
 
 # Add site links in Decap CMS (optional)
-site_url: https://future-site-five.vercel.app
+site_url: https://future5.vercel.app
 
 media_folder: public/images
 public_folder: /images
