@@ -121,9 +121,19 @@ const { frontmatter } = Astro.props;
       }
     }
     
-    /* Cusdis 评论框适配深色主题 */
+
+
+/* Cusdis 评论区 */
+#cusdis_thread {
+  width: 100%;
+  overflow: visible !important;
+}
+
+/* 只去掉外框 */
 #cusdis_thread iframe {
-  color-scheme: dark;
+  width: 100% !important;
+  border: none !important;
+  display: block !important;
 }
 
 /* 输入框 */
@@ -134,17 +144,18 @@ const { frontmatter } = Astro.props;
   border: 1px solid #334155 !important;
 }
 
-/* placeholder 提示文字（nickname / email / comment） */
+/* placeholder */
 #cusdis_thread input::placeholder,
 #cusdis_thread textarea::placeholder {
   color: #94a3b8 !important;
   opacity: 1 !important;
 }
 
-/* 标签文字 */
+/* 文字 */
 #cusdis_thread label,
 #cusdis_thread span,
-#cusdis_thread p {
+#cusdis_thread p,
+#cusdis_thread * {
   color: #e2e8f0 !important;
 }
 
@@ -153,34 +164,6 @@ const { frontmatter } = Astro.props;
   background: #2563eb !important;
   color: white !important;
   border: none !important;
-}
-
-/* 评论内容文字 */
-#cusdis_thread * {
-  color: #e2e8f0;
-}
-
-/* 让评论区整体不出现滚动条 */
-#cusdis_thread {
-  width: 100%;
-  overflow: visible !important;
-}
-
-/* iframe 自动撑开 */
-#cusdis_thread iframe {
-  width: 100% !important;
-  height: auto !important;
-  min-height: 900px !important;   /* 比之前大很多 */
-  border: none !important;
-  overflow: hidden !important;
-  display: block !important;
-}
-
-/* 输入提示文字 */
-#cusdis_thread input::placeholder,
-#cusdis_thread textarea::placeholder {
-  color: #94a3b8 !important;
-  opacity: 1 !important;
 }
 
 
@@ -205,11 +188,12 @@ const { frontmatter } = Astro.props;
 <div id="cusdis_thread"
   data-host="https://cusdis.com"
   data-app-id="144a18db-d90a-49b3-be55-10810219260c"
-  data-page-id={frontmatter.title}
-  data-page-url={Astro.url.pathname}
+  data-page-id={Astro.url.pathname}
+  data-page-url={Astro.url}
   data-page-title={frontmatter.title}
   data-lang="zh-cn"
   data-theme="dark"
+  data-page-size="20"
 ></div>
 
 <script async defer src="https://cusdis.com/js/cusdis.es.js"></script>
