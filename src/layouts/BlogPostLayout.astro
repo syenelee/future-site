@@ -28,14 +28,14 @@ const { frontmatter } = Astro.props;
       color: #e2e8f0;
       line-height: 1.9;
     }
-
+    
     .container {
       width: 100%;
       max-width: 860px;
       margin: 0 auto;
       padding: 72px 28px;
     }
-
+    
     article {
       background: rgba(15, 23, 42, 0.82);
       border: 1px solid rgba(148,163,184,0.12);
@@ -45,33 +45,33 @@ const { frontmatter } = Astro.props;
       box-shadow:
         0 20px 60px rgba(0,0,0,0.45);
     }
-
+    
     h1 {
       font-size: 3rem;
       line-height: 1.2;
       color: #dbeafe;
       margin-bottom: 12px;
     }
-
+    
     .date {
       color: #94a3b8;
       margin-bottom: 48px;
     }
-
+    
     p {
       font-size: 1.12rem;
       color: #e2e8f0;
     }
-
+    
     h2, h3 {
       margin-top: 48px;
       color: #bfdbfe;
     }
-
+    
     a {
       color: #93c5fd;
     }
-
+    
     blockquote {
       border-left: 4px solid #3b82f6;
       margin: 24px 0;
@@ -80,42 +80,42 @@ const { frontmatter } = Astro.props;
       border-radius: 12px;
       color: #cbd5e1;
     }
-
+    
     code {
       background: rgba(30,41,59,0.9);
       padding: 2px 6px;
       border-radius: 6px;
       font-size: 0.95rem;
     }
-
+    
     pre {
       overflow-x: auto;
       padding: 20px;
       border-radius: 18px;
       background: #020617;
     }
-
+    
     img {
       max-width: 100%;
       border-radius: 18px;
     }
-
+    
     .back {
       display: inline-block;
       margin-bottom: 36px;
       color: #93c5fd;
       text-decoration: none;
     }
-
+    
     .comments {
       margin-top: 64px;
     }
-
+    
     @media (max-width: 768px) {
       article {
         padding: 28px;
       }
-
+    
       h1 {
         font-size: 2.1rem;
       }
@@ -129,32 +129,23 @@ const { frontmatter } = Astro.props;
 
     <article>
       <h1>{frontmatter.title}</h1>
-
+    
       <div class="date">
         {frontmatter.date}
       </div>
-
+    
       <slot />
 
-      <div class="comments">
+ <div id="cusdis_thread"
+  data-host="https://cusdis.com"
+  data-app-id="144a18db-d90a-49b3-be55-10810219260c"
+  data-page-id={Astro.url.pathname}
+  data-page-url={Astro.url.href}
+  data-page-title={frontmatter.title}
+></div>
 
-      <script src="https://giscus.app/client.js"
-        data-repo="syenelee/future-site"
-        data-repo-id="R_kgDOSBR48A"
-        data-category="General"
-        data-category-id="DIC_kwDOSBR48M4C8wS2"
-        data-mapping="pathname"
-        data-strict="0"
-        data-reactions-enabled="1"
-        data-emit-metadata="0"
-        data-input-position="bottom"
-        data-theme="dark_dimmed"
-        data-lang="zh-CN"
-        crossorigin="anonymous"
-        async>
-</script>
+<script async defer src="https://cusdis.com/js/cusdis.es.js"></script>
 
-      </div>
     </article>
   </div>
 </body>
