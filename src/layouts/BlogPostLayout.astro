@@ -120,6 +120,45 @@ const { frontmatter } = Astro.props;
         font-size: 2.1rem;
       }
     }
+    
+    /* Cusdis 评论框适配深色主题 */
+#cusdis_thread iframe {
+  color-scheme: dark;
+}
+
+/* 输入框 */
+#cusdis_thread input,
+#cusdis_thread textarea {
+  background: #1a1a1a !important;
+  color: #ffffff !important;
+  border: 1px solid #334155 !important;
+}
+
+/* placeholder 提示文字（nickname / email / comment） */
+#cusdis_thread input::placeholder,
+#cusdis_thread textarea::placeholder {
+  color: #94a3b8 !important;
+  opacity: 1 !important;
+}
+
+/* 标签文字 */
+#cusdis_thread label,
+#cusdis_thread span,
+#cusdis_thread p {
+  color: #e2e8f0 !important;
+}
+
+/* 提交按钮 */
+#cusdis_thread button {
+  background: #2563eb !important;
+  color: white !important;
+  border: none !important;
+}
+
+/* 评论内容文字 */
+#cusdis_thread * {
+  color: #e2e8f0;
+}
   </style>
 </head>
 
