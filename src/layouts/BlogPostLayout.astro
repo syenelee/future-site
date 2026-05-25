@@ -159,6 +159,36 @@ const { frontmatter } = Astro.props;
 #cusdis_thread * {
   color: #e2e8f0;
 }
+
+/* 让评论区整体不出现滚动条 */
+#cusdis_thread {
+  width: 100%;
+  overflow: visible !important;
+}
+
+/* iframe 自动撑开 */
+#cusdis_thread iframe {
+  width: 100% !important;
+  min-height: 600px !important;
+  border: none !important;
+  overflow: visible !important;
+}
+
+/* 输入提示文字 */
+#cusdis_thread input::placeholder,
+#cusdis_thread textarea::placeholder {
+  color: #94a3b8 !important;
+  opacity: 1 !important;
+}
+
+/* 去掉滚动条（兼容浏览器） */
+#cusdis_thread iframe::-webkit-scrollbar {
+  display: none;
+}
+
+#cusdis_thread * {
+  scrollbar-width: none !important;
+}
   </style>
 </head>
 
@@ -175,12 +205,14 @@ const { frontmatter } = Astro.props;
     
       <slot />
 
- <div id="cusdis_thread"
+<div id="cusdis_thread"
   data-host="https://cusdis.com"
   data-app-id="144a18db-d90a-49b3-be55-10810219260c"
-  data-page-id={Astro.url.pathname}
-  data-page-url={Astro.url.href}
+  data-page-id={frontmatter.title}
+  data-page-url={Astro.url.pathname}
   data-page-title={frontmatter.title}
+  data-lang="zh-cn"
+  data-theme="dark"
 ></div>
 
 <script async defer src="https://cusdis.com/js/cusdis.es.js"></script>
