@@ -1,41 +1,75 @@
-  
 ---
-const title = "Future5";
+// ✅ 改进点：
+// 1. 抽出网站基础配置变量，便于维护
+// 2. 修正 og:url 为实际域名（原来是旧域名）
+// 3. 日期格式化为更友好的中文日期
+// 4. 补充 og:image、canonical 标签
+// 5. charset/viewport 移至 <head> 最顶部（推荐做法）
+// 6. viewport 补上 initial-scale=1（archive.astro 漏写了）
+// 7. 统一 CSS 缩进风格
+// 8. 修正导航：首页锚点改为实际页面链接 /
+// 9. 文章列表日期显示格式化（非原始字符串）
+// 10. 添加 <footer> 版权区域
+
+const SITE_URL = "https://future5.vercel.app";
+const SITE_TITLE = "Future5";
+const SITE_DESCRIPTION = "关于科技、历史、AI 与未来的个人博客。";
 
 const posts = Object.values(
   import.meta.glob("./posts/*.md", { eager: true })
-).sort((a, b) => {
-  return new Date(b.frontmatter.date) - new Date(a.frontmatter.date);
+).sort((a: any, b: any) => {
+  return new Date(b.frontmatter.date).getTime() - new Date(a.frontmatter.date).getTime();
 });
+
+// 日期格式化函数
+function formatDate(dateStr: string): string {
+  const d = new Date(dateStr);
+  return d.toLocaleDateString("zh-CN", { year: "numeric", month: "long", day: "numeric" });
+}
 ---
 
 <html lang="zh-CN">
   <head>
-    <meta name="description" content="关于科技、历史、AI 与未来的个人博客。" />
+    <!-- ✅ charset 和 viewport 始终放在最前面 -->
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+    <title>{SITE_TITLE}</title>
+
+    <!-- SEO -->
+    <meta name="description" content={SITE_DESCRIPTION} />
     <meta name="keywords" content="AI, 历史, 科技, 哲学, 博客, 未来" />
     <meta name="author" content="未来" />
 
-    <meta property="og:title" content="Future5" />
-    <meta property="og:description" content="关于科技、思考与未来的个人空间。" />
+    <!-- ✅ canonical 标签，避免重复内容问题 -->
+    <link rel="canonical" href={SITE_URL} />
+
+    <!-- Open Graph -->
+    <meta property="og:title" content={SITE_TITLE} />
+    <meta property="og:description" content={SITE_DESCRIPTION} />
     <meta property="og:type" content="website" />
-    <meta property="og:url" content="https://future-site-five.vercel.app/" />
+    <!-- ✅ 修正为正确域名（原文件用的是旧域名） -->
+    <meta property="og:url" content={SITE_URL} />
+    <!-- ✅ 补充 og:image（需将 /og-image.png 放入 public 目录） -->
+    <meta property="og:image" content={`${SITE_URL}/og-image.png`} />
 
+    <!-- Twitter Card -->
     <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:title" content={SITE_TITLE} />
+    <meta name="twitter:description" content={SITE_DESCRIPTION} />
 
+    <!-- Favicon -->
     <link rel="icon" type="image/png" sizes="32x32" href="/favicon.png" />
     <link rel="apple-touch-icon" href="/favicon.png" />
     <meta name="theme-color" content="#0b1220" />
 
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>{title}</title>
     <style>
       :root {
         font-family: "Microsoft YaHei", "PingFang SC", "Noto Sans SC", sans-serif;
         color: #e5e7eb;
         background:
-  radial-gradient(circle at top, rgba(59,130,246,0.12), transparent 40%),
-  linear-gradient(135deg, #020617 0%, #0f172a 45%, #111827 100%);
+          radial-gradient(circle at top, rgba(59, 130, 246, 0.12), transparent 40%),
+          linear-gradient(135deg, #020617 0%, #0f172a 45%, #111827 100%);
       }
 
       * {
@@ -47,108 +81,85 @@ const posts = Object.values(
       body {
         scroll-behavior: smooth;
         min-height: 100vh;
-        margin: 0;
-        padding: 0;
       }
 
-.navbar {
-  position: fixed;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 64px;
-  z-index: 1000;
-
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-
-  padding: 0 32px;
-  background: rgba(15, 23, 42, 0.88);
-  backdrop-filter: blur(12px);
-  border-bottom: 1px solid rgba(148, 163, 184, 0.12);
-}
+      /* ── 导航栏 ── */
+      .navbar {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 64px;
+        z-index: 1000;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding: 0 32px;
+        background: rgba(15, 23, 42, 0.88);
+        backdrop-filter: blur(12px);
+        border-bottom: 1px solid rgba(148, 163, 184, 0.12);
+      }
 
       .navbar nav a {
         margin-left: 20px;
         text-decoration: none;
         color: #e2e8f0;
+        transition: color 0.2s;
+      }
+
+      /* ✅ 导航链接 hover 效果 */
+      .navbar nav a:hover {
+        color: #93c5fd;
+      }
+
+      /* ✅ 当前页高亮（归档页不在此页，所以主动标记首页） */
+      .navbar nav a[aria-current="page"] {
+        color: #93c5fd;
       }
 
       .brand {
         font-size: 1.2rem;
         font-weight: 700;
         color: #93c5fd;
+        text-decoration: none;
       }
 
-.page {
-  width: 100%;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  gap: 32px;
+      /* ── 页面布局 ── */
+      .page {
+        width: 100%;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        gap: 32px;
+        padding: 100px 24px 64px;
+      }
 
-  padding: 100px 24px 40px;
-}
-
+      /* ── 卡片 ── */
       .card {
-  width: 100%;
-  max-width: 820px;
-  background: rgba(15, 23, 42, 0.78);
-  border-radius: 28px;
-  padding: 52px;
-  border: 1px solid rgba(148, 163, 184, 0.12);
-  box-shadow:
-    0 20px 60px rgba(0, 0, 0, 0.45),
-    inset 0 1px 0 rgba(255,255,255,0.03);
-  backdrop-filter: blur(18px);
-}
+        width: 100%;
+        max-width: 820px;
+        background: rgba(15, 23, 42, 0.78);
+        border-radius: 28px;
+        padding: 52px;
+        border: 1px solid rgba(148, 163, 184, 0.12);
+        box-shadow:
+          0 20px 60px rgba(0, 0, 0, 0.45),
+          inset 0 1px 0 rgba(255, 255, 255, 0.03);
+        backdrop-filter: blur(18px);
+      }
 
       h1 {
         scroll-margin-top: 100px;
         font-size: 3rem;
         margin-bottom: 16px;
         color: #93c5fd;
-        text-shadow: 0 0 24px rgba(96,165,250,0.22);
+        text-shadow: 0 0 24px rgba(96, 165, 250, 0.22);
       }
 
       h2 {
         font-size: 2rem;
         margin-bottom: 20px;
         color: #bfdbfe;
-      }
-
-      .post-list {
-        display: grid;
-        gap: 20px;
-      }
-
-      .post-item {
-  display: block;
-  text-decoration: none;
-  padding: 24px;
-  border-radius: 20px;
-  background: rgba(30, 41, 59, 0.72);
-  border: 1px solid rgba(148, 163, 184, 0.15);
-  transition: all 0.25s ease;
-}
-
-.post-item:hover {
-  transform: translateY(-4px);
-  background: rgba(51, 65, 85, 0.92);
-  border-color: rgba(96, 165, 250, 0.45);
-  box-shadow: 0 12px 30px rgba(37, 99, 235, 0.18);
-}
-
-.post-meta {
-  font-size: 0.9rem;
-  color: #94a3b8;
-  margin-bottom: 12px;
-  letter-spacing: 0.04em;
-}
-      .post-item h3 {
-        margin-bottom: 10px;
-        color: #dbeafe;
       }
 
       p {
@@ -158,6 +169,42 @@ const posts = Object.values(
         margin-bottom: 20px;
       }
 
+      /* ── 文章列表 ── */
+      .post-list {
+        display: grid;
+        gap: 20px;
+      }
+
+      .post-item {
+        display: block;
+        text-decoration: none;
+        padding: 24px;
+        border-radius: 20px;
+        background: rgba(30, 41, 59, 0.72);
+        border: 1px solid rgba(148, 163, 184, 0.15);
+        transition: all 0.25s ease;
+      }
+
+      .post-item:hover {
+        transform: translateY(-4px);
+        background: rgba(51, 65, 85, 0.92);
+        border-color: rgba(96, 165, 250, 0.45);
+        box-shadow: 0 12px 30px rgba(37, 99, 235, 0.18);
+      }
+
+      .post-meta {
+        font-size: 0.9rem;
+        color: #94a3b8;
+        margin-bottom: 12px;
+        letter-spacing: 0.04em;
+      }
+
+      .post-item h3 {
+        margin-bottom: 10px;
+        color: #dbeafe;
+      }
+
+      /* ── 按钮 ── */
       .btn {
         display: inline-block;
         margin-top: 12px;
@@ -171,39 +218,49 @@ const posts = Object.values(
       }
 
       .btn:hover {
-  transform: translateY(-3px) scale(1.02);
-  box-shadow:
-    0 10px 30px rgba(59,130,246,0.45),
-    0 0 18px rgba(96,165,250,0.35);
-}
+        transform: translateY(-3px) scale(1.02);
+        box-shadow:
+          0 10px 30px rgba(59, 130, 246, 0.45),
+          0 0 18px rgba(96, 165, 250, 0.35);
+      }
 
-@media (max-width: 768px) {
-  .navbar {
-    padding: 0 16px;
-  }
+      /* ── Footer ── */
+      footer {
+        text-align: center;
+        padding: 24px;
+        color: #475569;
+        font-size: 0.85rem;
+      }
 
-  .navbar nav a {
-    margin-left: 12px;
-    font-size: 0.9rem;
-  }
+      /* ── 响应式 ── */
+      @media (max-width: 768px) {
+        .navbar {
+          padding: 0 16px;
+        }
 
-  .card {
-    padding: 28px;
-  }
+        .navbar nav a {
+          margin-left: 12px;
+          font-size: 0.9rem;
+        }
 
-  h1 {
-    font-size: 2.2rem;
-  }
-}
+        .card {
+          padding: 28px;
+        }
+
+        h1 {
+          font-size: 2.2rem;
+        }
+      }
     </style>
   </head>
 
   <body>
-    
-<header class="navbar">
-      <div class="brand">Future5</div>
+    <header class="navbar">
+      <!-- ✅ brand 加链接，点击可回首页 -->
+      <a href="/" class="brand">Future5</a>
       <nav>
-        <a href="#home">首页</a>
+        <!-- ✅ 用真实路径，不依赖锚点；当前页标记 aria-current -->
+        <a href="/" aria-current="page">首页</a>
         <a href="#blog">博客</a>
         <a href="/archive">归档</a>
       </nav>
@@ -211,35 +268,34 @@ const posts = Object.values(
 
     <main class="page">
       <section class="card hero" id="home">
-        <h1>你好，欢迎来到Future5</h1>
+        <h1>你好，欢迎来到 Future5</h1>
         <p>
-          “Future5”是一个关于科技、思考与创造的个人空间。这里会记录我与AI对话的观察、灵感以及对世界变化的想法。部分内容由AI整理。
+          "Future5"是一个关于科技、思考与创造的个人空间。这里会记录我与AI对话的观察、灵感以及对世界变化的想法。部分内容由AI整理。
         </p>
-      
         <a href="#blog" class="btn">阅读博客</a>
       </section>
 
-<section class="card posts" id="blog">
-  <h2>最新文章</h2>
+      <section class="card posts" id="blog">
+        <h2>最新文章</h2>
 
-  <div class="post-list">
-    {posts.map((post) => (
-      <a href={post.url} class="post-item">
-        <div class="post-meta">
-          {post.frontmatter.date}
+        <div class="post-list">
+          {posts.map((post: any) => (
+            <a href={post.url} class="post-item">
+              <!-- ✅ 日期格式化为中文友好格式 -->
+              <div class="post-meta">
+                {formatDate(post.frontmatter.date)}
+              </div>
+              <h3>{post.frontmatter.title}</h3>
+              <p>{post.frontmatter.description || "点击阅读完整内容"}</p>
+            </a>
+          ))}
         </div>
-
-        <h3>
-          {post.frontmatter.title}
-        </h3>
-
-        <p>
-          {post.frontmatter.description || "点击阅读完整内容"}
-        </p>
-      </a>
-    ))}
-  </div>
-</section>
+      </section>
     </main>
+
+    <!-- ✅ 新增 footer -->
+    <footer>
+      © {new Date().getFullYear()} Future5 · All rights reserved
+    </footer>
   </body>
 </html>

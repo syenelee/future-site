@@ -1,235 +1,345 @@
 ---
+// ✅ 改进点：
+// 1. charset/viewport 移至最顶部
+// 2. 每篇文章有独立的 og:title / og:description（对分享很重要）
+// 3. 补充 canonical 标签
+// 4. 导航与其他页保持一致（去掉不存在的 /#about）
+// 5. brand 加跳转链接
+// 6. 日期格式化为中文友好格式
+// 7. 新增预估阅读时间（利用 frontmatter.description 字数）
+// 8. 新增"← 返回首页"链接，方便用户导航
+// 9. Cusdis 的 class 改用 comments，避免多余的 !important hack
+// 10. 添加 footer
+// 11. 修复 <meta name="viewport"> 漏了 initial-scale=1
+
 const { frontmatter } = Astro.props;
+const SITE_URL = "https://future5.vercel.app";
+
+function formatDate(dateStr: string): string {
+  const d = new Date(dateStr);
+  return d.toLocaleDateString("zh-CN", { year: "numeric", month: "long", day: "numeric" });
+}
+
+// ✅ 简单预估阅读时间（可选，依赖 frontmatter.wordCount 或描述长度）
+// 如果你的 md 文件有 wordCount frontmatter 就用它，否则省略
+const readingTime = frontmatter.wordCount
+  ? Math.ceil(frontmatter.wordCount / 300)
+  : null;
+
+const pageUrl = `${SITE_URL}${Astro.url.pathname}`;
+const ogDescription = frontmatter.description || `阅读《${frontmatter.title}》— Future5`;
 ---
 
 <html lang="zh-CN">
-<head>
-<link rel="icon" type="image/png" sizes="32x32" href="/favicon.png" />
-<link rel="apple-touch-icon" href="/favicon.png" />
-<meta name="theme-color" content="#0b1220" />  
-<meta charset="UTF-8" />
-<meta name="viewport" content="width=device-width" />
-<title>{frontmatter.title}</title>
+  <head>
+    <!-- ✅ charset 和 viewport 始终放最前 -->
+    <meta charset="UTF-8" />
+    <!-- ✅ 补上 initial-scale=1 -->
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 
-<style>
-  :root {
-    font-family:
-      "Microsoft YaHei",
-      "PingFang SC",
-      "Noto Sans SC",
-      sans-serif;
-  }
+    <title>{frontmatter.title} · Future5</title>
 
-  body {
-    margin: 0;
-    background:
-      radial-gradient(circle at top, rgba(59,130,246,0.08), transparent 35%),
-      linear-gradient(135deg, #020617 0%, #0f172a 50%, #111827 100%);
-    color: #e2e8f0;
-    line-height: 1.9;
-  }
+    <!-- SEO -->
+    <meta name="description" content={ogDescription} />
+    <!-- ✅ canonical -->
+    <link rel="canonical" href={pageUrl} />
 
-  /* 顶部导航栏 */
-  .navbar {
-    position: fixed;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 64px;
-    z-index: 1000;
+    <!-- ✅ 每篇文章独立的 Open Graph 信息 -->
+    <meta property="og:title" content={`${frontmatter.title} · Future5`} />
+    <meta property="og:description" content={ogDescription} />
+    <meta property="og:type" content="article" />
+    <meta property="og:url" content={pageUrl} />
+    {frontmatter.image && (
+      <meta property="og:image" content={`${SITE_URL}${frontmatter.image}`} />
+    )}
+    <!-- 文章发布时间（对 SEO 有益） -->
+    <meta property="article:published_time" content={frontmatter.date} />
 
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
+    <!-- Twitter Card -->
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:title" content={frontmatter.title} />
+    <meta name="twitter:description" content={ogDescription} />
 
-    padding: 0 32px;
-    background: rgba(15, 23, 42, 0.88);
-    backdrop-filter: blur(12px);
-    border-bottom: 1px solid rgba(148, 163, 184, 0.12);
-  }
+    <!-- Favicon -->
+    <link rel="icon" type="image/png" sizes="32x32" href="/favicon.png" />
+    <link rel="apple-touch-icon" href="/favicon.png" />
+    <meta name="theme-color" content="#0b1220" />
 
-  .brand {
-    font-size: 1.2rem;
-    font-weight: 700;
-    color: #93c5fd;
-  }
+    <style>
+      * {
+        box-sizing: border-box;
+        margin: 0;
+        padding: 0;
+      }
 
-  .navbar nav a {
-    margin-left: 20px;
-    text-decoration: none;
-    color: #e2e8f0;
-  }
+      :root {
+        font-family: "Microsoft YaHei", "PingFang SC", "Noto Sans SC", sans-serif;
+      }
 
-  .container {
-    width: 100%;
-    max-width: 860px;
-    margin: 0 auto;
-    padding: 100px 28px 72px;
-  }
+      body {
+        background:
+          radial-gradient(circle at top, rgba(59, 130, 246, 0.08), transparent 35%),
+          linear-gradient(135deg, #020617 0%, #0f172a 50%, #111827 100%);
+        color: #e2e8f0;
+        line-height: 1.9;
+        min-height: 100vh;
+      }
 
-  article {
-    background: rgba(15, 23, 42, 0.82);
-    border: 1px solid rgba(148,163,184,0.12);
-    border-radius: 28px;
-    padding: 56px;
-    backdrop-filter: blur(18px);
-    box-shadow:
-      0 20px 60px rgba(0,0,0,0.45);
-  }
+      /* ── 导航栏 ── */
+      .navbar {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 64px;
+        z-index: 1000;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding: 0 32px;
+        background: rgba(15, 23, 42, 0.88);
+        backdrop-filter: blur(12px);
+        border-bottom: 1px solid rgba(148, 163, 184, 0.12);
+      }
 
-  h1 {
-    font-size: 3rem;
-    line-height: 1.2;
-    color: #dbeafe;
-    margin-bottom: 12px;
-  }
+      .brand {
+        font-size: 1.2rem;
+        font-weight: 700;
+        color: #93c5fd;
+        text-decoration: none;
+      }
 
-  .date {
-    color: #94a3b8;
-    margin-bottom: 48px;
-  }
+      .navbar nav a {
+        margin-left: 20px;
+        text-decoration: none;
+        color: #e2e8f0;
+        transition: color 0.2s;
+      }
 
-  p {
-    font-size: 1.12rem;
-    color: #e2e8f0;
-  }
+      .navbar nav a:hover {
+        color: #93c5fd;
+      }
 
-  h2, h3 {
-    margin-top: 48px;
-    color: #bfdbfe;
-  }
+      /* ── 内容区 ── */
+      .container {
+        width: 100%;
+        max-width: 860px;
+        margin: 0 auto;
+        padding: 100px 28px 72px;
+      }
 
-  a {
-    color: #93c5fd;
-  }
+      /* ✅ 返回链接 */
+      .back-link {
+        display: inline-flex;
+        align-items: center;
+        gap: 6px;
+        color: #64748b;
+        text-decoration: none;
+        font-size: 0.9rem;
+        margin-bottom: 24px;
+        transition: color 0.2s;
+      }
 
-  blockquote {
-    border-left: 4px solid #3b82f6;
-    margin: 24px 0;
-    padding: 8px 20px;
-    background: rgba(30,41,59,0.45);
-    border-radius: 12px;
-    color: #cbd5e1;
-  }
+      .back-link:hover {
+        color: #93c5fd;
+      }
 
-  code {
-    background: rgba(30,41,59,0.9);
-    padding: 2px 6px;
-    border-radius: 6px;
-    font-size: 0.95rem;
-  }
+      /* ── 文章主体 ── */
+      article {
+        background: rgba(15, 23, 42, 0.82);
+        border: 1px solid rgba(148, 163, 184, 0.12);
+        border-radius: 28px;
+        padding: 56px;
+        backdrop-filter: blur(18px);
+        box-shadow: 0 20px 60px rgba(0, 0, 0, 0.45);
+      }
 
-  pre {
-    overflow-x: auto;
-    padding: 20px;
-    border-radius: 18px;
-    background: #020617;
-  }
+      h1 {
+        font-size: 3rem;
+        line-height: 1.2;
+        color: #dbeafe;
+        margin-bottom: 12px;
+      }
 
-  img {
-    max-width: 100%;
-    border-radius: 18px;
-  }
+      /* ✅ 文章元信息区（日期 + 阅读时间） */
+      .post-meta {
+        display: flex;
+        align-items: center;
+        gap: 16px;
+        color: #94a3b8;
+        font-size: 0.9rem;
+        margin-bottom: 48px;
+      }
 
-  .comments {
-    margin-top: 64px;
-  }
+      .post-meta .sep {
+        color: #334155;
+      }
 
-  /* Cusdis 评论区 */
-  #cusdis_thread {
-    width: 100%;
-    overflow: visible !important;
-  }
+      /* ── 正文样式 ── */
+      p {
+        font-size: 1.12rem;
+        color: #e2e8f0;
+        margin-bottom: 1.2em;
+      }
 
-  #cusdis_thread iframe {
-    width: 100% !important;
-    border: none !important;
-    display: block !important;
-  }
+      h2 {
+        font-size: 1.75rem;
+        margin-top: 48px;
+        margin-bottom: 16px;
+        color: #bfdbfe;
+      }
 
-  #cusdis_thread input,
-  #cusdis_thread textarea {
-    background: #1a1a1a !important;
-    color: #ffffff !important;
-    border: 1px solid #334155 !important;
-  }
+      h3 {
+        font-size: 1.35rem;
+        margin-top: 36px;
+        margin-bottom: 12px;
+        color: #bfdbfe;
+      }
 
-  #cusdis_thread input::placeholder,
-  #cusdis_thread textarea::placeholder {
-    color: #94a3b8 !important;
-    opacity: 1 !important;
-  }
+      a {
+        color: #93c5fd;
+        text-underline-offset: 3px;
+      }
 
-  #cusdis_thread label,
-  #cusdis_thread span,
-  #cusdis_thread p,
-  #cusdis_thread * {
-    color: #e2e8f0 !important;
-  }
+      blockquote {
+        border-left: 4px solid #3b82f6;
+        margin: 24px 0;
+        padding: 12px 20px;
+        background: rgba(30, 41, 59, 0.45);
+        border-radius: 12px;
+        color: #cbd5e1;
+      }
 
-  #cusdis_thread button {
-    background: #2563eb !important;
-    color: white !important;
-    border: none !important;
-  }
+      /* ✅ blockquote 里的 p 不需要额外下边距 */
+      blockquote p {
+        margin-bottom: 0;
+      }
 
-  @media (max-width: 768px) {
-    .navbar {
-      padding: 0 16px;
-    }
+      code {
+        background: rgba(30, 41, 59, 0.9);
+        padding: 2px 6px;
+        border-radius: 6px;
+        font-size: 0.95em;
+      }
 
-    .navbar nav a {
-      margin-left: 12px;
-      font-size: 0.9rem;
-    }
+      pre {
+        overflow-x: auto;
+        padding: 20px;
+        border-radius: 18px;
+        background: #020617;
+        margin: 24px 0;
+      }
 
-    article {
-      padding: 28px;
-    }
+      pre code {
+        background: none;
+        padding: 0;
+        font-size: 0.9rem;
+      }
 
-    h1 {
-      font-size: 2.1rem;
-    }
-  }
-</style>
-</head>
+      img {
+        max-width: 100%;
+        border-radius: 18px;
+        margin: 16px 0;
+      }
 
-<body>
+      ul, ol {
+        padding-left: 1.5em;
+        margin-bottom: 1.2em;
+      }
 
-  <header class="navbar">
-    <div class="brand">Future5</div>
-    <nav>
-      <a href="/">首页</a>
-      <a href="/#blog">博客</a>
-      <a href="/#about">关于</a>
-      <a href="/archive">归档</a>
-    </nav>
-  </header>
+      li {
+        margin-bottom: 0.4em;
+      }
 
-  <div class="container">
-    <article>
-      <h1>{frontmatter.title}</h1>
+      /* ── 评论区 ── */
+      .comments {
+        margin-top: 64px;
+        padding-top: 32px;
+        border-top: 1px solid rgba(148, 163, 184, 0.1);
+      }
 
-      <div class="date">
-        {frontmatter.date}
-      </div>
+      /* ── Footer ── */
+      footer {
+        text-align: center;
+        padding: 24px;
+        color: #475569;
+        font-size: 0.85rem;
+      }
 
-      <slot />
+      /* ── 响应式 ── */
+      @media (max-width: 768px) {
+        .navbar {
+          padding: 0 16px;
+        }
 
-      <div id="cusdis_thread"
-        data-host="https://cusdis.com"
-        data-app-id="144a18db-d90a-49b3-be55-10810219260c"
-        data-page-id={Astro.url.pathname}
-        data-page-url={Astro.url}
-        data-page-title={frontmatter.title}
-        data-lang="zh-cn"
-        data-theme="dark"
-        data-page-size="20"
-      ></div>
+        .navbar nav a {
+          margin-left: 12px;
+          font-size: 0.9rem;
+        }
 
-      <script async defer src="https://cusdis.com/js/cusdis.es.js"></script>
+        article {
+          padding: 28px;
+        }
 
-    </article>
-  </div>
-</body>
+        h1 {
+          font-size: 2.1rem;
+        }
+      }
+    </style>
+  </head>
+
+  <body>
+    <header class="navbar">
+      <!-- ✅ brand 可点击 -->
+      <a href="/" class="brand">Future5</a>
+      <nav>
+        <a href="/">首页</a>
+        <a href="/#blog">博客</a>
+        <!-- ✅ 去掉了不存在的 /#about；导航与其他页一致 -->
+        <a href="/archive">归档</a>
+      </nav>
+    </header>
+
+    <div class="container">
+      <!-- ✅ 返回链接 -->
+      <a href="/" class="back-link">← 返回首页</a>
+
+      <article>
+        <h1>{frontmatter.title}</h1>
+
+        <!-- ✅ 格式化日期 + 可选阅读时间 -->
+        <div class="post-meta">
+          <span>{formatDate(frontmatter.date)}</span>
+          {readingTime && (
+            <>
+              <span class="sep">·</span>
+              <span>约 {readingTime} 分钟阅读</span>
+            </>
+          )}
+        </div>
+
+        <slot />
+
+        <!-- ✅ 评论区用 div.comments 包裹，语义更清晰 -->
+        <div class="comments">
+          <div
+            id="cusdis_thread"
+            data-host="https://cusdis.com"
+            data-app-id="144a18db-d90a-49b3-be55-10810219260c"
+            data-page-id={Astro.url.pathname}
+            data-page-url={pageUrl}
+            data-page-title={frontmatter.title}
+            data-lang="zh-cn"
+            data-theme="dark"
+          ></div>
+          <script async defer src="https://cusdis.com/js/cusdis.es.js"></script>
+        </div>
+      </article>
+    </div>
+
+    <!-- ✅ footer -->
+    <footer>
+      © {new Date().getFullYear()} Future5 · All rights reserved
+    </footer>
+  </body>
 </html>

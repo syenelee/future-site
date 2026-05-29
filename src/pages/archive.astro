@@ -1,142 +1,245 @@
 ---
+// ✅ 改进点：
+// 1. 补充 SEO meta（description、og:* 等）
+// 2. viewport 补上 initial-scale=1（原来漏了）
+// 3. charset/viewport 移至最顶部
+// 4. 导航与 index.astro 保持一致（去掉不存在的 /#about 链接）
+// 5. 当前页（归档）添加 aria-current 及高亮样式
+// 6. brand 加跳转链接
+// 7. 日期格式化为中文友好格式
+// 8. 添加文章数量统计
+// 9. 空列表时显示友好提示
+// 10. 添加 footer
+
+const SITE_URL = "https://future5.vercel.app";
+
 const posts = Object.values(
   import.meta.glob("./posts/*.md", { eager: true })
-).sort((a, b) => {
-  return new Date(b.frontmatter.date) - new Date(a.frontmatter.date);
+).sort((a: any, b: any) => {
+  return new Date(b.frontmatter.date).getTime() - new Date(a.frontmatter.date).getTime();
 });
+
+function formatDate(dateStr: string): string {
+  const d = new Date(dateStr);
+  return d.toLocaleDateString("zh-CN", { year: "numeric", month: "long", day: "numeric" });
+}
 ---
 
 <html lang="zh-CN">
-<head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width" />
+  <head>
+    <!-- ✅ charset 和 viewport 始终放最前 -->
+    <meta charset="UTF-8" />
+    <!-- ✅ 补上 initial-scale=1 -->
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 
-  <title>文章归档</title>
+    <title>文章归档 · Future5</title>
 
-  <!-- favicon -->
-  <link rel="icon" type="image/png" sizes="32x32" href="/favicon.png" />
-  <link rel="apple-touch-icon" href="/favicon.png" />
-  <meta name="theme-color" content="#0b1220" />
+    <!-- ✅ SEO -->
+    <meta name="description" content="Future5 全部文章归档列表，按时间倒序排列。" />
+    <link rel="canonical" href={`${SITE_URL}/archive`} />
 
-  <style>
-    body {
-      margin: 0;
-      font-family: "Microsoft YaHei", "PingFang SC", "Noto Sans SC", sans-serif;
-      background:
-        radial-gradient(circle at top, rgba(59,130,246,0.1), transparent 40%),
-        linear-gradient(135deg, #020617 0%, #0f172a 50%, #111827 100%);
-      color: #e2e8f0;
-      min-height: 100vh;
-    }
+    <!-- Open Graph -->
+    <meta property="og:title" content="文章归档 · Future5" />
+    <meta property="og:description" content="Future5 全部文章归档列表。" />
+    <meta property="og:type" content="website" />
+    <meta property="og:url" content={`${SITE_URL}/archive`} />
 
-    /* 顶部导航栏 */
-    .navbar {
-      position: fixed;
-      top: 0;
-      left: 0;
-      width: 100%;
-      height: 64px;
-      z-index: 1000;
+    <!-- Favicon -->
+    <link rel="icon" type="image/png" sizes="32x32" href="/favicon.png" />
+    <link rel="apple-touch-icon" href="/favicon.png" />
+    <meta name="theme-color" content="#0b1220" />
 
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
+    <style>
+      * {
+        box-sizing: border-box;
+        margin: 0;
+        padding: 0;
+      }
 
-      padding: 0 32px;
-      background: rgba(15, 23, 42, 0.88);
-      backdrop-filter: blur(12px);
-      border-bottom: 1px solid rgba(148, 163, 184, 0.12);
-    }
+      body {
+        font-family: "Microsoft YaHei", "PingFang SC", "Noto Sans SC", sans-serif;
+        background:
+          radial-gradient(circle at top, rgba(59, 130, 246, 0.1), transparent 40%),
+          linear-gradient(135deg, #020617 0%, #0f172a 50%, #111827 100%);
+        color: #e2e8f0;
+        min-height: 100vh;
+      }
 
-    .brand {
-      font-size: 1.2rem;
-      font-weight: 700;
-      color: #93c5fd;
-    }
-
-    .navbar nav a {
-      margin-left: 20px;
-      text-decoration: none;
-      color: #e2e8f0;
-    }
-
-    .container {
-      max-width: 760px;
-      margin: 0 auto;
-      padding: 100px 24px 60px;
-    }
-
-    h1 {
-      margin-bottom: 40px;
-      color: #93c5fd;
-      font-size: 2.6rem;
-    }
-
-    .item {
-      display: flex;
-      justify-content: space-between;
-      gap: 20px;
-      padding: 18px 0;
-      border-bottom: 1px solid rgba(148,163,184,0.12);
-      text-decoration: none;
-      color: #e2e8f0;
-      transition: 0.2s ease;
-    }
-
-    .item:hover {
-      color: #93c5fd;
-      transform: translateX(4px);
-    }
-
-    .date {
-      color: #94a3b8;
-      flex-shrink: 0;
-    }
-
-    @media (max-width: 768px) {
+      /* ── 导航栏 ── */
       .navbar {
-        padding: 0 16px;
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 64px;
+        z-index: 1000;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding: 0 32px;
+        background: rgba(15, 23, 42, 0.88);
+        backdrop-filter: blur(12px);
+        border-bottom: 1px solid rgba(148, 163, 184, 0.12);
+      }
+
+      .brand {
+        font-size: 1.2rem;
+        font-weight: 700;
+        color: #93c5fd;
+        text-decoration: none;
       }
 
       .navbar nav a {
-        margin-left: 12px;
-        font-size: 0.9rem;
+        margin-left: 20px;
+        text-decoration: none;
+        color: #e2e8f0;
+        transition: color 0.2s;
+      }
+
+      .navbar nav a:hover {
+        color: #93c5fd;
+      }
+
+      /* ✅ 当前页高亮 */
+      .navbar nav a[aria-current="page"] {
+        color: #93c5fd;
+      }
+
+      /* ── 内容区 ── */
+      .container {
+        max-width: 760px;
+        margin: 0 auto;
+        padding: 100px 24px 60px;
+      }
+
+      .page-header {
+        margin-bottom: 40px;
       }
 
       h1 {
-        font-size: 2rem;
+        color: #93c5fd;
+        font-size: 2.6rem;
+        margin-bottom: 8px;
       }
 
+      /* ✅ 文章数量提示 */
+      .count {
+        color: #64748b;
+        font-size: 0.9rem;
+      }
+
+      /* ── 列表项 ── */
       .item {
-        flex-direction: column;
-        gap: 6px;
+        display: flex;
+        justify-content: space-between;
+        gap: 20px;
+        padding: 18px 0;
+        border-bottom: 1px solid rgba(148, 163, 184, 0.12);
+        text-decoration: none;
+        color: #e2e8f0;
+        transition: color 0.2s, transform 0.2s;
       }
-    }
-  </style>
-</head>
 
-<body>
+      .item:hover {
+        color: #93c5fd;
+        transform: translateX(4px);
+      }
 
-  <header class="navbar">
-    <div class="brand">Future5</div>
-    <nav>
-      <a href="/">首页</a>
-      <a href="/#blog">博客</a>
-      <a href="/#about">关于</a>
-      <a href="/archive">归档</a>
-    </nav>
-  </header>
+      .item-title {
+        flex: 1;
+        min-width: 0;
+        /* ✅ 长标题不溢出 */
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+      }
 
-  <div class="container">
-    <h1>文章归档</h1>
+      .date {
+        color: #94a3b8;
+        flex-shrink: 0;
+        font-size: 0.9rem;
+        /* ✅ 日期与标题对齐 */
+        display: flex;
+        align-items: center;
+      }
 
-    {posts.map((post) => (
-      <a href={post.url} class="item">
-        <span>{post.frontmatter.title}</span>
-        <span class="date">{post.frontmatter.date}</span>
-      </a>
-    ))}
-  </div>
+      /* ✅ 空列表提示 */
+      .empty {
+        color: #475569;
+        text-align: center;
+        padding: 60px 0;
+      }
 
-</body>
+      /* ── Footer ── */
+      footer {
+        text-align: center;
+        padding: 24px;
+        color: #475569;
+        font-size: 0.85rem;
+      }
+
+      /* ── 响应式 ── */
+      @media (max-width: 768px) {
+        .navbar {
+          padding: 0 16px;
+        }
+
+        .navbar nav a {
+          margin-left: 12px;
+          font-size: 0.9rem;
+        }
+
+        h1 {
+          font-size: 2rem;
+        }
+
+        .item {
+          flex-direction: column;
+          gap: 6px;
+        }
+
+        .item-title {
+          white-space: normal;
+        }
+      }
+    </style>
+  </head>
+
+  <body>
+    <header class="navbar">
+      <!-- ✅ brand 可点击返回首页 -->
+      <a href="/" class="brand">Future5</a>
+      <nav>
+        <a href="/">首页</a>
+        <a href="/#blog">博客</a>
+        <!-- ✅ 当前页标记；去掉不存在的 /#about -->
+        <a href="/archive" aria-current="page">归档</a>
+      </nav>
+    </header>
+
+    <div class="container">
+      <div class="page-header">
+        <h1>文章归档</h1>
+        <!-- ✅ 显示文章总数 -->
+        <p class="count">共 {posts.length} 篇文章</p>
+      </div>
+
+      {posts.length === 0 ? (
+        <p class="empty">暂无文章，敬请期待。</p>
+      ) : (
+        posts.map((post: any) => (
+          <a href={post.url} class="item">
+            <span class="item-title">{post.frontmatter.title}</span>
+            <!-- ✅ 日期格式化 -->
+            <span class="date">{formatDate(post.frontmatter.date)}</span>
+          </a>
+        ))
+      )}
+    </div>
+
+    <!-- ✅ footer -->
+    <footer>
+      © {new Date().getFullYear()} Future5 · All rights reserved
+    </footer>
+  </body>
 </html>
